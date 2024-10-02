@@ -1,10 +1,12 @@
 // Initialize map
 var map = L.map('map').setView([28.6139, 77.2090], 11);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+
+L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 18
 }).addTo(map);
 
-// Simulated data
+// Simulated data for stats
 function updateStats() {
     document.getElementById('activeBuses').textContent = Math.floor(Math.random() * 50) + 100;
     document.getElementById('alerts').textContent = Math.floor(Math.random() * 5) + " delays, " + Math.floor(Math.random() * 3) + " breakdowns";
@@ -24,10 +26,37 @@ var buses = [
 ];
 
 // Add bus markers to map
-buses.forEach(function(bus) {
-    L.marker(bus).addTo(map);
+var busIcon = L.icon({
+    iconUrl: 'bus-icon.png', // Add the correct path to your bus icon image
+    iconSize: [30, 30]
 });
 
+buses.forEach(function(bus) {
+    L.marker(bus, { icon: busIcon }).addTo(map);
+});
+
+// Modal implementation for alerting
 function showAlert(section) {
-    alert(section + " functionality is not implemented in this demo.");
+    // Remove existing modals
+    const existingOverlay = document.querySelector('.modal-overlay');
+    const existingModal = document.querySelector('.modal');
+    if (existingOverlay) existingOverlay.remove();
+    if (existingModal) existingModal.remove();
+
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.classList.add('modal-overlay');
+    overlay.addEventListener('click', function () {
+        overlay.remove();
+        modal.remove();
+    });
+
+    // Create modal
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.innerHTML = `<h3>${section}</h3><p>Details will be available soon.</p>`;
+
+    // Append modal and overlay to the body
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
 }
